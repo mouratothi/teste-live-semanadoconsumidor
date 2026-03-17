@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="Sala de Transmissão Semana do Consumidor.">
+    <title>Semana do Consumidor - Ao Vivo</title>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WRJZTZP');</script>
+    <!-- End Google Tag Manager -->
+
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://api.fontshare.com">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600,700,800&display=swap" rel="stylesheet">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* Configurações Globais DARK MODE */
+        :root {
+            --color-bg: #050505; /* Fundo ainda mais escuro para destacar o neon */
+            --color-text: #f8fafc;
+            --color-brand-orange: #ff6b00; /* Novo Laranja Neon */
+            --color-brand-blue: #4facfe; /* Azul claro para contraste do neon */
+        }
+
+        body {
+            font-family: 'Switzer', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animações de Fundo (Ambient Light adaptada para Neon) */
+        .ambient-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: float 12s infinite ease-in-out;
+            will-change: transform;
+        }
+
+        .orb-1 {
+            width: 70vw;
+            height: 70vw;
+            max-width: 800px;
+            max-height: 800px;
+            background: radial-gradient(circle, var(--color-brand-blue) 0%, transparent 60%);
+            top: -20%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 50vw;
+            height: 50vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, var(--color-brand-orange) 0%, transparent 70%);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -40px); }
+        }
+
+        /* Navbar Flutuante Escura */
+        .glass-nav-dark {
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Gradiente do Texto com Efeito Neon */
+        .text-expert-highlight {
+            background: linear-gradient(90deg, #ff6b00 0%, #ff9e43 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 0, 0.4);
+        }
+
+        /* Animações Básicas */
+        .fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+        .slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.8s ease-out forwards; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilo da caixa de Vídeo/Espera */
+        .video-placeholder-glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 107, 0, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .video-placeholder-glass:hover {
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 107, 0, 0.1), inset 0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        /* Animação do Ponto de Ao Vivo - Adaptado para o Laranja da Campanha */
+        .pulse-neon {
+            animation: pulse-neon-anim 2s infinite;
+        }
+
+        @keyframes pulse-neon-anim {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 107, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+        }
+
+        /* Botão de Oferta Neon */
+        @keyframes offerReveal {
+            0%   { opacity: 0; transform: scale(0.85) translateY(16px); }
+            60%  { transform: scale(1.04) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes offerGlow {
+            0%, 100% { box-shadow: 0 0 20px 4px rgba(255, 107, 0, 0.4), 0 0 60px 10px rgba(255, 107, 0, 0.15); }
+            50%       { box-shadow: 0 0 35px 8px rgba(255, 107, 0, 0.8), 0 0 80px 20px rgba(255, 107, 0, 0.3); }
+        }
+
+        .offer-reveal {
+            animation: offerReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                       offerGlow 2.5s ease-in-out 0.7s infinite;
+        }
+
+        @keyframes countdownPulse {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(255, 107, 0, 0.8); }
+            50%       { opacity: 0.6; text-shadow: 0 0 2px rgba(255, 107, 0, 0.2); }
+        }
+
+        .countdown-urgent { animation: countdownPulse 1s ease-in-out infinite; color: #ff6b00; }
+
+        .logo-glow {
+            /* Removido o filtro que forçava a cor branca, mantendo apenas a sombra neon */
+            filter: drop-shadow(0 0 10px rgba(255, 107, 0, 0.4));
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WRJZTZP"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        // ==========================================
+        // CONFIGURAÇÕES DA LIVE
+        // ==========================================
+        const CONFIG = {
+            videoId: '9-A6kYQVx5M', 
+            domain: window.location.hostname,
+            // Horário em que o botão de oferta acende automaticamente
+            offerStartTime: new Date('2026-03-17T19:45:00'),
+            // Horário em que a oferta encerra (botão some automaticamente)
+            offerEndTime: new Date('2026-03-17T23:59:59'),
+            checkoutUrl: 'https://promo.ocalev.com.br/live-semana-do-consumidor-exclusivo?utm_source=crm&utm_medium=lp&utm_campaign=venda_semana_do_cliente_1703&utm_content=botao_lp',
+        };
+
+        // ==========================================
+        // HELPER: DISPARO DE EVENTOS PARA O GTM
+        // ==========================================
+        function pushEvent(eventName, extraParams) {
+            window.dataLayer = window.dataLayer || [];
+            const params = window.location.search;
+            const urlParams = new URLSearchParams(params);
+
+            window.dataLayer.push({
+                event: eventName,
+                video_id: CONFIG.videoId,
+                utm_source: urlParams.get('utm_source') || null,
+                utm_medium: urlParams.get('utm_medium') || null,
+                utm_campaign: urlParams.get('utm_campaign') || null,
+                utm_content: urlParams.get('utm_content') || null,
+                event_timestamp: new Date().toISOString(),
+                ...extraParams
+            });
+
+            console.log('[DataLayer] Evento disparado:', eventName, extraParams);
+        }
+
+        // --- NAVBAR ---
+        const Navbar = () => {
+            return (
+                <nav className="fixed top-4 w-[95%] max-w-[1400px] z-50 glass-nav-dark rounded-2xl transition-all duration-300">
+                    <div className="px-6 h-16 md:h-20 flex items-center justify-center relative">
+                        <img 
+                            src="https://i.ibb.co/kNsvsJx/Logo-Woca-Grande.png" 
+                            alt="Woca Logo" 
+                            className="h-8 md:h-10 object-contain opacity-90 hover:opacity-100 transition-opacity brightness-0 invert" 
+                        />
+                    </div>
+                </nav>
+            );
+        };
+
+        // --- MAIN ROOM CONTENT ---
+        const LiveRoom = () => {
+            const [userNome, setUserNome] = React.useState(null);
+            const [userEmail, setUserEmail] = React.useState(null);
+            const playerRef = React.useRef(null);
+
+            React.useEffect(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const email = urlParams.get('email');
+                const nome = urlParams.get('nome');
+
+                if (email) setUserEmail(email);
+                if (nome) setUserNome(nome);
+
+                pushEvent('page_view_live', {
+                    lead_email: email || null,
+                    lead_nome: nome || null,
+                    traffic_source: urlParams.get('utm_source') || 'direct',
+                });
+
+                if (email) {
+                    pushEvent('lead_identified', {
+                        lead_email: email,
+                        lead_nome: nome || null,
+                        traffic_source: urlParams.get('utm_source') || 'direct',
+                    });
+                }
+            }, []);
+
+            React.useEffect(() => {
+                if (CONFIG.videoId === '9-A6kYQVx5M') return;
+
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.body.appendChild(tag);
+
+                let player;
+                let progressInterval;
+                let videoStarted = false;
+
+                const TIME_MILESTONES_MINUTES = Array.from({length: 18}, (_, i) => (i + 1) * 5);
+                const milestonesTracked = {};
+                TIME_MILESTONES_MINUTES.forEach(m => milestonesTracked[m] = false);
+
+                let watchStartTimestamp = null;
+                let accumulatedWatchMs = 0;
+
+                window.onYouTubeIframeAPIReady = () => {
+                    player = new YT.Player('yt-player', {
+                        videoId: CONFIG.videoId,
+                        playerVars: {
+                            autoplay: 1,
+                            rel: 0,
+                        },
+                        events: {
+                            onReady: () => {
+                                playerRef.current = player;
+                            },
+                            onStateChange: (event) => {
+                                if (event.data === YT.PlayerState.PLAYING) {
+                                    if (!videoStarted) {
+                                        videoStarted = true;
+                                        pushEvent('video_start', {});
+                                    }
+
+                                    watchStartTimestamp = Date.now();
+                                    clearInterval(progressInterval);
+                                    progressInterval = setInterval(() => {
+                                        const sessionMs = watchStartTimestamp ? Date.now() - watchStartTimestamp : 0;
+                                        const totalWatchedMinutes = (accumulatedWatchMs + sessionMs) / 1000 / 60;
+
+                                        TIME_MILESTONES_MINUTES.forEach((milestone) => {
+                                            if (totalWatchedMinutes >= milestone && !milestonesTracked[milestone]) {
+                                                milestonesTracked[milestone] = true;
+                                                pushEvent('video_progress', {
+                                                    minutes_watched: milestone,
+                                                });
+                                            }
+                                        });
+                                    }, 10000);
+                                } else {
+                                    if (watchStartTimestamp) {
+                                        accumulatedWatchMs += Date.now() - watchStartTimestamp;
+                                        watchStartTimestamp = null;
+                                    }
+                                    clearInterval(progressInterval);
+                                }
+
+                                if (event.data === YT.PlayerState.ENDED) {
+                                    clearInterval(progressInterval);
+                                    pushEvent('video_complete', {});
+                                }
+                            }
+                        }
+                    });
+                };
+
+                return () => {
+                    clearInterval(progressInterval);
+                    if (player && typeof player.destroy === 'function') {
+                        player.destroy();
+                    }
+                };
+            }, []);
+
+            const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+            const [offerPhase, setOfferPhase] = React.useState('teaser');
+            const [countdown, setCountdown] = React.useState(null);
+
+            React.useEffect(() => {
+                let offerTimer, countdownInterval;
+
+                // Em preview: 30 segundos. Em produção: tempo real entre offerStartTime e offerEndTime.
+                const OFFER_DURATION_MS = isPreview
+                    ? 30 * 1000
+                    : CONFIG.offerEndTime - CONFIG.offerStartTime;
+
+                function activateOffer() {
+                    setOfferPhase('active');
+                    setCountdown(OFFER_DURATION_MS / 1000);
+
+                    const isWatchingNow = playerRef.current &&
+                        typeof playerRef.current.getPlayerState === 'function' &&
+                        playerRef.current.getPlayerState() === YT.PlayerState.PLAYING;
+                    pushEvent('offer_revealed', {
+                        watching_at_offer_reveal: isWatchingNow === true,
+                    });
+
+                    countdownInterval = setInterval(() => {
+                        setCountdown(prev => {
+                            if (prev <= 1) {
+                                clearInterval(countdownInterval);
+                                setOfferPhase('ended');
+                                pushEvent('offer_ended', {});
+                                return 0;
+                            }
+                            return prev - 1;
+                        });
+                    }, 1000);
+                }
+
+                if (isPreview) {
+                    offerTimer = setTimeout(activateOffer, 10 * 1000);
+                } else {
+                    const clockCheck = setInterval(() => {
+                        const now = new Date();
+                        if (now >= CONFIG.offerStartTime) {
+                            clearInterval(clockCheck);
+                            activateOffer();
+                        }
+                    }, 1000);
+                    return () => { clearInterval(clockCheck); clearInterval(countdownInterval); };
+                }
+
+                return () => { clearTimeout(offerTimer); clearInterval(countdownInterval); };
+            }, []);
+
+            function formatCountdown(seconds) {
+                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                return m + ':' + s;
+            }
+
+            return (
+                <section className="w-full max-w-6xl flex flex-col items-center justify-center pt-24 md:pt-32 pb-16 z-10 px-4">
+                    
+                    {/* Header Copy */}
+                    <div className="text-center flex flex-col items-center gap-5 slide-up w-full">
+                        
+                        {/* BADGE DE AO VIVO */}
+                        <div className="inline-flex items-center p-[2px] rounded-full bg-gradient-to-r from-[#ff6b00] to-orange-900 shadow-lg shadow-[#ff6b00]/20">
+                            <div className="bg-[#050505] px-5 py-2 rounded-full flex items-center gap-3 w-full h-full">
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#ff6b00] pulse-neon"></div>
+                                <span className="text-xs md:text-sm font-bold text-white tracking-widest uppercase">
+                                    Estamos ao vivo
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* TÍTULO */}
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight max-w-4xl mt-2">
+                            Aproveite as ofertas exclusivas da <span className="text-expert-highlight font-black inline-block whitespace-nowrap">Semana do Consumidor</span>
+                        </h1>
+
+                        {/* Mensagem de Boas-vindas Dinâmica */}
+                        <p className="text-base md:text-lg text-gray-400 max-w-2xl font-medium mt-4 leading-relaxed">
+                            {userNome ? (
+                                <span>Bem-vindo(a), <strong className="text-white">{userNome}</strong>! Acomode-se e aproveite o conteúdo.</span>
+                            ) : userEmail ? (
+                                <span>Bem-vindo(a), <strong className="text-white">{userEmail}</strong>! Acomode-se e aproveite o conteúdo.</span>
+                            ) : (
+                                "Acomode-se! Acompanhe abaixo o evento e aproveite as nossas condições exclusivas."
+                            )}
+                        </p>
+                    </div>
+
+                    {/* GRID: PLAYER DE VÍDEO + CHAT */}
+                    <div className="w-full mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 slide-up delay-100">
+                        
+                        <div className="lg:col-span-2 w-full aspect-video video-placeholder-glass rounded-[24px] overflow-hidden relative shadow-2xl">
+                            {CONFIG.videoId !== 'SEU_ID_DO_VIDEO_AQUI' ? (
+                                <div id="yt-player" className="absolute top-0 left-0 w-full h-full"></div>
+                            ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 p-8 text-center">
+                                    <svg className="w-12 h-12 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    <p>O player do YouTube aparecerá aqui assim que você configurar o <b>CONFIG.videoId</b> no código.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="lg:col-span-1 w-full h-[500px] lg:h-full video-placeholder-glass rounded-[24px] overflow-hidden relative">
+                            {CONFIG.videoId !== 'SEU_ID_DO_VIDEO_AQUI' && CONFIG.domain !== 'SEU_DOMINIO_AQUI' ? (
+                                <iframe 
+                                    className="absolute top-0 left-0 w-full h-full"
+                                    src={`https://www.youtube.com/live_chat?v=${CONFIG.videoId}&embed_domain=${CONFIG.domain}&dark_theme=1`} 
+                                    frameBorder="0">
+                                </iframe>
+                            ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 p-8 text-center">
+                                    <svg className="w-10 h-10 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <p className="text-sm">Configure o domínio e o ID do vídeo para ativar o chat ao vivo.</p>
+                                </div>
+                            )}
+                        </div>
+
+                    </div>
+
+                    {/* BOTÃO DE OFERTA */}
+                    <div className="w-full max-w-3xl mt-10">
+
+                        {offerPhase === 'teaser' && (
+                            <div className="w-full flex flex-col items-center gap-3">
+                                <div className="w-full flex items-center justify-center gap-4 p-5 rounded-2xl bg-white/[0.03] border border-white/10 opacity-40 cursor-not-allowed select-none">
+                                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                    <span className="text-gray-400 font-bold text-base md:text-lg tracking-wide">Oferta especial — em breve</span>
+                                </div>
+                                {isPreview && (
+                                    <p className="text-xs text-[#ff6b00]/70 tracking-widest uppercase">⚡ Modo preview ativo — oferta abre em 10s</p>
+                                )}
+                            </div>
+                        )}
+
+                        {offerPhase === 'active' && (
+                            <div className="w-full flex flex-col items-center gap-4">
+                                <a
+                                    href={CONFIG.checkoutUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => pushEvent('offer_clicked', {})}
+                                    className="offer-reveal w-full flex flex-col sm:flex-row items-center justify-center gap-3 px-8 py-5 rounded-2xl text-white font-black text-lg md:text-xl tracking-wide cursor-pointer no-underline"
+                                    style={{background: 'linear-gradient(135deg, #ff6b00 0%, #cc5500 100%)'}}
+                                >
+                                    <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    <span>Garantir Condição Exclusiva Agora</span>
+                                    <svg className="w-5 h-5 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </a>
+                                <div className={"flex items-center gap-2 text-sm font-semibold tracking-widest uppercase " + (countdown <= 60 ? 'countdown-urgent' : 'text-gray-400')}>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Oferta encerra em <strong>{formatCountdown(countdown)}</strong></span>
+                                </div>
+                            </div>
+                        )}
+
+                        {offerPhase === 'ended' && (
+                            <div className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                                <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span className="text-gray-600 text-sm font-medium">Oferta encerrada</span>
+                            </div>
+                        )}
+
+                    </div>
+
+                    {/* Tópicos da Live */}
+                    <div className="w-full max-w-3xl mt-12 bg-white/5 border border-white/10 backdrop-blur-md rounded-3xl p-6 md:p-10 slide-up delay-200 shadow-xl hover:border-[#ff6b00]/30 transition-all duration-300">
+                        <h3 className="text-xl md:text-2xl font-bold text-white mb-6 md:mb-8 text-center md:text-left flex items-center justify-center md:justify-start gap-3">
+                            <svg className="w-6 h-6 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            O que preparamos para você:
+                        </h3>
+                        
+                        <div className="flex flex-col gap-3">
+                            {[
+                                "Novidades imperdíveis do Woca",
+                                "Demonstração da criação de projetos no modo tradicional e no Expert",
+                                "Promoção EXCLUSIVA para quem estiver na live",
+                                "Sessão tira-dúvidas",
+                                "Sorteio"
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[#ff6b00]/50 transition-all group w-full">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#ff6b00]/20 to-[#4facfe]/20 border border-white/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:border-[#ff6b00]/50 transition-all shadow-inner">
+                                        <svg className="w-4 h-4 text-white group-hover:text-[#ff6b00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                    <span className="text-gray-300 font-medium md:text-lg tracking-wide group-hover:text-white transition-colors">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                </section>
+            );
+        };
+
+        // --- FOOTER ---
+        const Footer = () => {
+            return (
+                <footer className="w-full border-t border-white/10 bg-black/40 backdrop-blur-sm mt-auto relative z-10">
+                    <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="flex flex-col items-center md:items-start gap-2">
+                            <img src="https://i.ibb.co/kNsvsJx/Logo-Woca-Grande.png" alt="Woca" className="h-6 opacity-40 brightness-0 invert" />
+                            <p className="text-xs text-gray-500 mt-2">© 2026 Woca Elétrica por Ocalev</p>
+                        </div>
+                    </div>
+                </footer>
+            );
+        };
+
+        // --- APP COMPONENT ---
+        const App = () => {
+            return (
+                <div className="min-h-screen relative flex flex-col items-center overflow-x-hidden selection:bg-[#ff6b00] selection:text-white">
+                    <Navbar />
+                    <LiveRoom />
+                    <Footer />
+                </div>
+            );
+        };
+
+        // RENDER LOGIC
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+
+    </script>
+</body>
+</html>
